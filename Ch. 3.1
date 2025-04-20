@@ -1,1 +1,71 @@
-# Simple algoritm to calculate the PV of future cash flows C from time t=1 to t=n assuming periodic compounding
+# Program to compute the future value (FV) of an investment using compound interest formulas
+import math
+
+def future_value_discrete(PV: float, annual_rate: float, m: int, t: float) -> float:
+    """
+    Compute future value with discrete compounding:
+      FV = PV * (1 + r/m)^(m*t)
+    where r is the annual rate (decimal), m is periods per year, t is years.
+    """
+    return PV * (1 + annual_rate/m)**(m * t)
+
+def future_value_continuous(PV: float, annual_rate: float, t: float) -> float:
+    """
+    Compute future value with continuous compounding:
+      FV = PV * e^(r*t)
+    """
+    return PV * math.exp(annual_rate * t)
+
+def get_positive_float(prompt: str) -> float:
+    while True:
+        try:
+            val = float(input(prompt))
+            if val < 0:
+                print("  ➔ Please enter a non‑negative number.")
+                continue
+            return val
+        except ValueError:
+            print("  ➔ Invalid input. Enter a number (e.g. 7.5).")
+
+def get_positive_int(prompt: str) -> int:
+    while True:
+        try:
+            val = int(input(prompt))
+            if val <= 0:
+                print("  ➔ Please enter a positive integer.")
+                continue
+            return val
+        except ValueError:
+            print("  ➔ Invalid input. Enter an integer (e.g. 12).")
+
+def main():
+    print("\n=== Future Value Calculator ===\n")
+    
+    while True:
+       
+        r_percent = get_positive_float("Annual interest rate (in %, e.g. 7.5)? ")
+        PV        = get_positive_float("Present Value? ")
+        comp_type = input("Compounding type—discrete [d] or continuous [c]? ").strip().lower()
+      
+        if comp_type.startswith('d'):
+            m = get_positive_int("Compounding periods per year (m)? ")
+            t = get_positive_float("Time period in years (t)? ")
+            FV = future_value_discrete(PV, r_percent/100, m, t)
+            label = f"discrete ({m}×/year)"
+        elif comp_type.startswith('c'):
+            t = get_positive_float("Time period in years (t)? ")
+            FV = future_value_continuous(PV, r_percent/100, t)
+            label = "continuous"
+        else:
+            print("Invalid option. Please choose 'd' or 'c'.\n")
+            continue  
+
+        print(f"\nFuture Value after {t} years [{label}]: {FV:,.2f}\n")
+
+        again = input("Calculate again? [y/n]: ").strip().lower()
+        if not again.startswith('y'):
+            print("\nGoodbye!")
+            break
+
+if __name__ == "__main__":
+    main()
